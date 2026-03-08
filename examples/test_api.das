@@ -54,9 +54,8 @@ def main() {
     for (u in updates) {
         print("  update_id={u.update_id}")
         if (u.message != null) {
-            unsafe {
-                print(" from={u.message._from.first_name} text=\"{u.message.text}\"")
-            }
+            assume msg = *u.message
+            print(" from={msg._from.first_name} text=\"{msg.text}\"")
         }
         print("\n")
     }

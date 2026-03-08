@@ -38,16 +38,14 @@ def main() {
         for (u in updates) {
             offset = u.update_id + 1l
             if (u.message != null) {
-                unsafe {
-                    let msg & = *u.message
-                    let chat_id = "{msg.chat.id}"
-                    if (!empty(msg.text)) {
-                        print("{msg._from.first_name}: {msg.text}\n")
-                        telegram_sendMessage(send_message(chat_id = chat_id, text = msg.text))
-                        let send_err = telegram_get_last_error()
-                        if (!empty(send_err)) {
-                            print("Send error: {send_err}\n")
-                        }
+                assume msg = *u.message
+                let chat_id = "{msg.chat.id}"
+                if (!empty(msg.text)) {
+                    print("{msg._from.first_name}: {msg.text}\n")
+                    telegram_sendMessage(send_message(chat_id = chat_id, text = msg.text))
+                    let send_err = telegram_get_last_error()
+                    if (!empty(send_err)) {
+                        print("Send error: {send_err}\n")
                     }
                 }
             }
