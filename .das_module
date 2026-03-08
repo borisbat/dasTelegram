@@ -1,0 +1,10 @@
+options gen2
+require fio
+
+[export]
+def initialize(project_path : string) {
+    let telegram_paths = ["tbot", "tbotapi"]
+    for (path in telegram_paths) {
+        register_native_path("telegram", "{path}", "{project_path}/telegram/{path}.das")
+    }
+}

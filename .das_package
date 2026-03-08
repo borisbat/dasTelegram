@@ -1,0 +1,20 @@
+options gen2
+
+require daslib/daspkg
+
+[export]
+def package() {
+    package_name("dasTelegram")
+    package_author("Boris Batkin")
+    package_description("Telegram Bot API bindings for daslang — zero-DOM JSON via sscan_json/sprint_json")
+    package_source("github.com/borisbat/dasTelegram")
+}
+
+[export]
+def resolve(sdk_version, version : string) {
+    if (empty(version) || version == "latest") {
+        download_branch("main")
+    } else {
+        download_tag("v{version}")
+    }
+}
