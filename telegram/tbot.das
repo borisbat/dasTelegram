@@ -9,7 +9,7 @@ module tbot shared private
 require tbotapi public
 
 require dashv/dashv_boost
-require fio
+require daslib/fio
 require strings
 
 struct public configuration {

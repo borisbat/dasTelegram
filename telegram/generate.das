@@ -4,7 +4,7 @@ options gen2
 
 require daslib/json_boost
 require strings
-require fio
+require daslib/fio
 
 var g_FOUT = fstdout()
 
