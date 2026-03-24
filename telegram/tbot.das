@@ -207,7 +207,7 @@ def public telegram_getMe() {
     return <- res
 }
 
-struct public send_photo {
+struct public simple_send_photo {
     chat_id : string
     file : string
     reply_to_message_id : int64
@@ -215,7 +215,7 @@ struct public send_photo {
     parse_mode : string
 }
 
-def public telegram_sendPhoto(photo : tbot::send_photo) {
+def public telegram_sendPhoto(photo : simple_send_photo) {
     //! send photo to telegram chat or user
     var settings <- { "photo" => "@{photo.file}", "chat_id" => "{photo.chat_id}" }
     if (photo.reply_to_message_id != 0l) {
