@@ -68,6 +68,7 @@ def resolve_field_type(field_jv : JsonValue const?; is_optional : bool) : string
     unsafe {
         let types_jv = field_jv?["types"]
         if (types_jv != null && (types_jv.value is _array)) {
+            type_names |> reserve(length(types_jv.value as _array))
             for (t in types_jv.value as _array) {
                 type_names |> push(t ?? "")
             }
@@ -111,9 +112,9 @@ def process_struct(name : string; type_jv : JsonValue const?) {
         if (desc_jv != null && (desc_jv.value is _array)) {
             for (d in desc_jv.value as _array) {
                 if (!comment |> empty) {
-                    comment = "{comment} "
+                    comment = "{comment} " // nolint:PERF004 code generator building description string
                 }
-                comment = "{comment}{d ?? ""}"
+                comment = "{comment}{d ?? ""}" // nolint:PERF004 code generator building description string
             }
         }
     }
