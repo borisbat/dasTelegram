@@ -17,7 +17,7 @@ def sanitize_name(name : string) : string {
 }
 
 def to_snake_case(name : string) : string {
-    return build_string() <| $(writer) {
+    return build_string() $(writer) {
         var prev_upper = false
         for (i, Ch in count(), name) {
             let is_upper = Ch >= 'A' && Ch <= 'Z'
@@ -181,7 +181,7 @@ def process_methods(root : JsonValue?) {
 
 [export]
 def main() {
-    var api_text = fread("{get_das_root()}/modules/dasTelegram/telegram/api.json")
+    let api_text = fread("{get_das_root()}/modules/dasTelegram/telegram/api.json")
     if (api_text |> empty) {
         panic("failed to read api.json")
     }
@@ -190,7 +190,7 @@ def main() {
     if (root == null) {
         panic("failed to parse api.json: {error}")
     }
-    fopen("{get_das_root()}/modules/dasTelegram/telegram/tbotapi.das", "w") <| $(ff) {
+    fopen("{get_das_root()}/modules/dasTelegram/telegram/tbotapi.das", "w") $(ff) {
         if (ff == null) {
             panic("failed to open output file")
         }

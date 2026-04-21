@@ -115,9 +115,9 @@ def private telegram_call(METHOD : string; request : auto; var res : auto(RES_TY
     if (LOG_API_CALLS) {
         to_log(LOG_INFO, "API CALL: {url}\n")
     }
-    POST(url, body, { "Content-Type" => "application/json" }) <| $(resp) {
+    POST(url, body, { "Content-Type" => "application/json" }) $(resp) {
         if (resp.status_code == http_status.OK) {
-            peek(resp.body) <| $(text) {
+            peek(resp.body) $(text) {
                 let ok_val = json_extract_field(text, "ok")
                 if (ok_val == "true") {
                     let result_json = json_extract_field(text, "result")
@@ -125,13 +125,13 @@ def private telegram_call(METHOD : string; request : auto; var res : auto(RES_TY
                         sscan_json(result_json, res)
                     }
                 } else {
-                    peek(resp.body) <| $(body_text) {
+                    peek(resp.body) $(body_text) {
                         LAST_ERROR = "API returned not OK\n{body_text}"
                     }
                 }
             }
         } else {
-            peek(resp.body) <| $(body_text) {
+            peek(resp.body) $(body_text) {
                 LAST_ERROR = "FAILED\n{resp.status_code}\n{body_text}\n"
             }
         }
@@ -188,9 +188,9 @@ def public telegram_download(f : tbotapi::file) {
     LAST_ERROR = ""
     let url = "https://api.telegram.org/file/bot{BOT_TOKEN}/{f.file_path}"
     var bytes : array<uint8>
-    GET(url) <| $(resp) {
+    GET(url) $(resp) {
         if (resp.status_code != http_status.OK) {
-            peek(resp.body) <| $(body_text) {
+            peek(resp.body) $(body_text) {
                 LAST_ERROR = "GET failed with status {resp.status_code}\n{body_text}"
             }
             return
@@ -228,9 +228,9 @@ def public telegram_sendPhoto(photo : simple_send_photo) {
         }
     }
     LAST_ERROR = ""
-    POST("https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", "", { "Content-Type" => "multipart/form-data" }, settings) <| $(resp) {
+    POST("https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", "", { "Content-Type" => "multipart/form-data" }, settings) $(resp) {
         if (resp.status_code != http_status.OK) {
-            peek(resp.body) <| $(body_text) {
+            peek(resp.body) $(body_text) {
                 LAST_ERROR = "HTTPS POST failed with status {resp.status_code}\n{body_text}"
             }
         }
@@ -238,7 +238,7 @@ def public telegram_sendPhoto(photo : simple_send_photo) {
 }
 
 def public telegram_setMyCommands(commands : set_my_commands) {
-    var res : bool
+    let res : bool
     telegram_call("setMyCommands", commands, res)
     return res
 }
@@ -251,7 +251,7 @@ Equals sign (=) Vertical bar (|)    Left curly brace ({)    Right curly brace (}
 Period (.)  Exclamation mark (!)
 */
 def public telegram_escapeMarkdownV2(text : string) {
-    return build_string() <| $(writer) {
+    return build_string() $(writer) {
         for (Ch in text) {
             if (Ch == '_' || Ch == '*' || Ch == '`' || Ch == '[' || Ch == ']' || Ch == '(' || Ch == ')' || Ch == '~' || Ch == '>' || Ch == '#' || Ch == '+' || Ch == '-' || Ch == '=' || Ch == '|' || Ch == '{' || Ch == '}' || Ch == '.' || Ch == '!') {
                 writer |> write_char('\\')
