@@ -152,8 +152,38 @@ def public telegram_sendMessage(msg : send_message) {
     return <- res
 }
 
+// Largest byte index <= maxlength at which `text` can be split without cutting a multi-byte
+// UTF-8 character — Telegram rejects an invalid-UTF-8 chunk with 400 "strings must be encoded
+// in UTF-8". Prefers a newline or space near the limit so chunks break between lines/words.
+def private utf8_split_at(text : string; maxlength : int) : int {
+    let n = length(text)
+    if (n <= maxlength) {
+        return n
+    }
+    var cut = maxlength
+    peek_data(text) $(b) {
+        while (cut > 0 && (int(b[cut]) & 0xc0) == 0x80) {   // UTF-8 continuation bytes are 0x80..0xBF
+            cut--
+        }
+        var brk = -1
+        var p = cut - 1
+        let floor = maxlength / 2
+        while (p >= floor && brk < 0) {
+            let c = int(b[p])
+            if (c == 10 || c == 32) {   // '\n' or ' '
+                brk = p + 1
+            }
+            p--
+        }
+        if (brk > 0) {
+            cut = brk
+        }
+    }
+    return cut < 1 ? maxlength : cut
+}
+
 def public telegram_sendLongMessage(msg : send_message; maxlength : int = 4096; prefix : string = ""; suffix : string = "") {
-    //! send long message to telegram chat or user, splitting at maxlength
+    //! send long message to telegram chat or user, splitting at maxlength (never mid-UTF-8-character)
     var res : array<message>
     var text = msg.text
     var cur_msg : send_message
@@ -162,8 +192,9 @@ def public telegram_sendLongMessage(msg : send_message; maxlength : int = 4096; 
     LAST_ERROR = ""
     while (!empty(text)) {
         if (length(text) > maxlength) {
-            cur_msg.text = "{prefix}{text |> slice(0, maxlength)}{suffix}"
-            text = text |> slice(maxlength)
+            let cut = utf8_split_at(text, maxlength)
+            cur_msg.text = "{prefix}{text |> slice(0, cut)}{suffix}"
+            text = text |> slice(cut)
         } else {
             cur_msg.text = "{prefix}{text}{suffix}"
             text = ""
