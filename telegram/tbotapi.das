@@ -2,6 +2,7 @@
 // Source: https://github.com/PaulSonOfLars/telegram-bot-api-spec
 // Bot API 9.5, March 1, 2026
 options gen2
+options _comment_hygiene = true
 options indenting = 4
 options no_unused_block_arguments = false
 options no_unused_function_arguments = false
