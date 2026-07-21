@@ -1,6 +1,7 @@
 // Generator for tbotapi.das from Telegram Bot API JSON spec
 // Source: https://github.com/PaulSonOfLars/telegram-bot-api-spec/blob/main/api.json
 options gen2
+options _comment_hygiene = true
 
 require daslib/json_boost
 require strings
